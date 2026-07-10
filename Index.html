@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>SP · Rio · Medellín — Jul 10–19</title>
+<style>
+  :root{
+    --bg:#F4F3F8; --card:#FFFFFF; --ink:#1C1C1E; --sub:#8E8E93; --sub2:#AEAEB2;
+    --hair:rgba(60,60,67,.10); --blue:#0A84FF; --usd:#1E8E3E;
+    --gsp:linear-gradient(135deg,#FF9500 0%,#FF3B77 100%);
+    --grio:linear-gradient(135deg,#0A84FF 0%,#30C8D6 100%);
+    --gmde:linear-gradient(135deg,#0FAE5F 0%,#8BD41C 100%);
+    --grad:linear-gradient(135deg,#5E5CE6 0%,#0A84FF 45%,#30C8D6 80%,#8BD41C 115%);
+    --sunset:linear-gradient(135deg,#FF9F0A,#FF5E3A);
+    --r:20px; --shadow:0 1px 2px rgba(0,0,0,.04),0 4px 16px rgba(0,0,0,.06);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display",system-ui,sans-serif;
+    background:var(--bg); color:var(--ink);
+    -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+    padding-bottom:calc(84px + env(safe-area-inset-bottom));
+  }
+  button{font:inherit;border:0;background:none;cursor:pointer;color:inherit}
+  a{color:inherit;text-decoration:none}
+  svg{display:block}
+
+  /* ---------- Nav ---------- */
+  .nav{
+    position:sticky;top:0;z-index:50;
+    background:rgba(244,243,248,.72);
+    -webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);
+    border-bottom:0.5px solid var(--hair);
+    padding:calc(14px + env(safe-area-inset-top)) 20px 12px;
+  }
+  .nav h1{font-size:34px;font-weight:800;letter-spacing:-.022em;line-height:1.05;
+    background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;display:inline-block}
+  .nav h1.city{background:none;-webkit-text-fill-color:currentColor}
+  .crumbrow{display:flex;gap:8px;margin-top:8px;align-items:center}
+  .chip{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;letter-spacing:.01em;
+    background:#fff;border:0.5px solid var(--hair);border-radius:99px;padding:5px 11px;color:#3A3A3C;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+  .chip .dot{width:7px;height:7px;border-radius:50%;display:inline-block}
+  .chip .arr{color:#C7C7CC;font-weight:800;margin:0 1px}
+  .chip svg{width:12px;height:12px}
+
+  /* ---------- Tab bar ---------- */
+  .tabbar{
+    position:fixed;left:0;right:0;bottom:0;z-index:60;
+    display:flex;justify-content:space-around;align-items:flex-start;
+    background:rgba(255,255,255,.72);
+    -webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);
+    border-top:0.5px solid var(--hair);
+    padding:8px 4px calc(8px + env(safe-area-inset-bottom));
+  }
+  .tabbar button{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--sub2);transition:color .2s, transform .15s}
+  .tabbar button:active{transform:scale(.94)}
+  .tabbar svg{width:26px;height:26px}
+  .tabbar span{font-size:10.5px;font-weight:600;letter-spacing:-.01em}
+  .tabbar button.on{color:var(--blue)}
+
+  /* ---------- Layout ---------- */
+  .page{max-width:560px;margin:0 auto;padding:14px 16px 24px;animation:pageIn .32s cubic-bezier(.2,.8,.25,1)}
+  @keyframes pageIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+  .eyebrow{font-size:13px;font-weight:700;color:var(--sub);text-transform:uppercase;letter-spacing:.05em;margin:22px 6px 8px}
+  .eyebrow:first-child{margin-top:4px}
+  .card{background:var(--card);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden}
+
+  /* ---------- Hero ---------- */
+  .hero{border-radius:24px;background:var(--grad);color:#fff;padding:22px 20px;box-shadow:0 10px 30px rgba(60,90,230,.3);position:relative;overflow:hidden}
+  .hero::after{content:"";position:absolute;inset:-40% -20% auto auto;width:280px;height:280px;border-radius:50%;background:rgba(255,255,255,.15);filter:blur(2px)}
+  .hero .k{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;opacity:.9}
+  .hero h2{font-size:26px;font-weight:800;letter-spacing:-.02em;margin:6px 0 2px}
+  .hero p{font-size:14px;font-weight:500;opacity:.94}
+  .hero .legs{display:flex;gap:8px;margin-top:16px;position:relative;z-index:1}
+  .hero .leg{flex:1;background:rgba(255,255,255,.18);border:0.5px solid rgba(255,255,255,.3);border-radius:14px;padding:10px 10px;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+  .hero .leg b{display:block;font-size:15px;font-weight:700}
+  .hero .leg span{font-size:11.5px;font-weight:500;opacity:.92}
+
+  /* ---------- Rows ---------- */
+  .row{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:0.5px solid var(--hair);width:100%;text-align:left;transition:background .15s}
+  .card>.row:last-child, .card>div:last-child .row{border-bottom:0}
+  .row:active{background:#FAFAFA}
+  .glyph{width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:inset 0 -2px 6px rgba(0,0,0,.04)}
+  .glyph svg{width:21px;height:21px}
+  .row .mid{flex:1;min-width:0}
+  .row .t{font-size:15.5px;font-weight:600;letter-spacing:-.01em;line-height:1.25}
+  .row .s{font-size:13px;color:var(--sub);margin-top:2px;line-height:1.3}
+  .row .end{display:flex;flex-direction:column;align-items:flex-end;flex-shrink:0;gap:2px}
+  .time{font-size:11.5px;font-weight:700;color:#55555C;background:#F1F0F6;padding:3px 8px;border-radius:99px;white-space:nowrap}
+  .time.sunset{background:var(--sunset);color:#fff}
+  .price{font-size:13px;font-weight:600;color:#3A3A3C;white-space:nowrap}
+  .usd{font-size:11.5px;font-weight:700;color:var(--usd);white-space:nowrap}
+  .chev{width:16px;height:16px;color:#C7C7CC;flex-shrink:0;transition:transform .28s cubic-bezier(.2,.8,.25,1)}
+  .open .chev{transform:rotate(180deg)}
+
+  /* ---------- Expansion ---------- */
+  .exp{max-height:0;overflow:hidden;transition:max-height .34s cubic-bezier(.2,.8,.25,1)}
+  .exp-in{padding:2px 16px 14px 72px}
+  .transport{display:flex;align-items:center;gap:8px;background:#F1F0F6;border-radius:12px;padding:9px 12px;font-size:12.5px;font-weight:500;color:#48484A;margin-bottom:8px}
+  .transport svg{width:15px;height:15px;flex-shrink:0}
+  .note{display:flex;gap:8px;background:#FFF8E6;border:0.5px solid #F5E3AE;border-radius:12px;padding:9px 12px;font-size:12.5px;line-height:1.45;color:#6B5A1E;margin-bottom:8px}
+  .note svg{width:15px;height:15px;flex-shrink:0;margin-top:1px}
+  .acts{display:flex;gap:8px}
+  .acts a{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;font-size:13px;font-weight:600;padding:9px 0;border-radius:12px;transition:transform .12s}
+  .acts a:active{transform:scale(.96)}
+  .acts svg{width:15px;height:15px}
+  .acts .maps{background:#EAF3FF;color:#0A66D0}
+  .acts .uber{background:#111;color:#fff}
+
+  /* ---------- Day pills + banner ---------- */
+  .pills{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 12px;scrollbar-width:none}
+  .pills::-webkit-scrollbar{display:none}
+  .pill{flex-shrink:0;padding:9px 15px;border-radius:99px;font-size:13.5px;font-weight:700;background:#fff;color:#6C6C70;box-shadow:var(--shadow);transition:all .22s cubic-bezier(.2,.8,.25,1)}
+  .pill.on{color:#fff;transform:scale(1.04);box-shadow:0 6px 16px rgba(0,0,0,.16)}
+  .banner{border-radius:20px;color:#fff;padding:16px 18px;margin:4px 0 14px;position:relative;overflow:hidden;box-shadow:0 8px 22px rgba(0,0,0,.14)}
+  .banner::after{content:"";position:absolute;right:-46px;top:-46px;width:150px;height:150px;border-radius:50%;background:rgba(255,255,255,.16)}
+  .banner .d{font-size:23px;font-weight:800;letter-spacing:-.02em;position:relative;z-index:1}
+  .banner .theme{font-size:13.5px;font-weight:600;opacity:.95;margin-top:2px;position:relative;z-index:1}
+  .banner .chips{display:flex;gap:7px;margin-top:11px;position:relative;z-index:1;flex-wrap:wrap}
+  .wx{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:#fff;background:rgba(255,255,255,.22);border:0.5px solid rgba(255,255,255,.35);padding:5px 11px;border-radius:99px;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+  .wx svg{width:14px;height:14px}
+  .wx.umb{background:rgba(20,20,30,.28)}
+
+  /* ---------- Callouts ---------- */
+  .callout{display:flex;gap:10px;border-radius:16px;padding:13px 14px;font-size:13px;line-height:1.5;margin:12px 0}
+  .callout svg{width:17px;height:17px;flex-shrink:0;margin-top:1px}
+  .callout.warn{background:#FFF1EC;color:#8A3B22;border:0.5px solid #F7D4C6}
+  .callout.tip{background:#EAF6EE;color:#1E5A34;border:0.5px solid #CBE8D4}
+  .callout b{font-weight:700}
+
+  /* ---------- Checklist ---------- */
+  .check{display:flex;align-items:flex-start;gap:12px;padding:12px 16px;border-bottom:0.5px solid var(--hair);width:100%;text-align:left}
+  .check:last-child{border-bottom:0}
+  .box{width:23px;height:23px;border-radius:50%;border:1.5px solid #C7C7CC;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;transition:all .2s cubic-bezier(.2,.8,.25,1);color:transparent}
+  .check.done .box{background:var(--grad);border-color:transparent;color:#fff}
+  .check .txt{font-size:14px;line-height:1.45;transition:all .2s}
+  .check.done .txt{color:var(--sub);text-decoration:line-through}
+  .box svg{width:13px;height:13px}
+
+  /* ---------- Weather cards ---------- */
+  .wxgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  .wxcard{border-radius:16px;box-shadow:var(--shadow);padding:13px 12px;color:#fff;position:relative;overflow:hidden}
+  .wxcard::after{content:"";position:absolute;right:-24px;bottom:-24px;width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,.18)}
+  .wxcard .c{font-size:12px;font-weight:800;letter-spacing:-.01em}
+  .wxcard .big{margin:8px 0 6px}
+  .wxcard .big svg{width:24px;height:24px}
+  .wxcard .rng{font-size:14px;font-weight:800}
+  .wxcard .d{font-size:10.5px;opacity:.95;line-height:1.35;margin-top:3px;font-weight:500;position:relative;z-index:1}
+
+  /* ---------- Mini action buttons (hotels/flights) ---------- */
+  .mini{display:flex;gap:6px;margin-top:5px}
+  .mini a{width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;transition:transform .12s}
+  .mini a:active{transform:scale(.92)}
+  .mini svg{width:14px;height:14px}
+  .mini .maps{background:#EAF3FF;color:#0A66D0}
+  .mini .uber{background:#111;color:#fff}
+
+  .foot{text-align:center;font-size:12px;color:var(--sub2);margin-top:26px;line-height:1.6}
+  @media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<div class="nav">
+  <h1 id="navTitle">Trip</h1>
+  <div class="crumbrow" id="crumb"></div>
+</div>
+
+<div id="root"></div>
+
+<div class="tabbar" id="tabbar"></div>
+
+<script>
+/* ============================== HELPERS ============================== */
+const gm = q => "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(q);
+const ub = q => "https://m.uber.com/ul/?action=setPickup&pickup=my_location&dropoff%5Bformatted_address%5D=" + encodeURIComponent(q);
+const esc = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;");
+
+/* ============================== ICONS (SF-style stroke set) ============================== */
+const svg = (paths, w=2) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round">${paths}</svg>`;
+const ICO = {
+  food:   svg('<path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/>'),
+  coffee: svg('<path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/><path d="M7 1.5v3M11 1.5v3"/>'),
+  sight:  svg('<path d="M3 22h18"/><path d="M6 18v-7M10 18v-7M14 18v-7M18 18v-7"/><path d="M12 2 3 7v2h18V7Z"/>'),
+  beach:  svg('<path d="M12 2a9 9 0 0 1 9 9H3a9 9 0 0 1 9-9Z"/><path d="M12 2v9M12 11v8a2.5 2.5 0 0 0 5 0"/>'),
+  hike:   svg('<path d="m8 3 4 8 5-5 5 15H2L8 3Z"/>'),
+  night:  svg('<path d="M8 22h8M12 11.5V22M19 3l-7 8.5L5 3Z"/><path d="M8.5 7h7"/>'),
+  party:  svg('<path d="M12 3l1.7 5 5.3 1.7-5.3 1.7L12 16.5l-1.7-5.1L5 9.7 10.3 8Z"/><path d="M19 15.5l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8Z"/><path d="M5 16.5l.6 1.7 1.7.6-1.7.6-.6 1.7-.6-1.7L2.7 19.4l1.7-.6Z"/>'),
+  music:  svg('<path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>'),
+  flight: svg('<path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2Z"/>'),
+  rest:   svg('<path d="M2 4v16"/><path d="M2 8h18a2 2 0 0 1 2 2v10"/><path d="M2 17h20"/><path d="M6 8v9"/>'),
+  tour:   svg('<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3Z"/><circle cx="12" cy="13" r="3.2"/>'),
+  shop:   svg('<path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/>'),
+  jet:    svg('<path d="M2 7c1.7 1.4 3.3 1.4 5 0s3.3-1.4 5 0 3.3 1.4 5 0 3.3-1.4 5 0"/><path d="M2 12.5c1.7 1.4 3.3 1.4 5 0s3.3-1.4 5 0 3.3 1.4 5 0 3.3-1.4 5 0"/><path d="M2 18c1.7 1.4 3.3 1.4 5 0s3.3-1.4 5 0 3.3 1.4 5 0 3.3-1.4 5 0"/>'),
+  sun:    svg('<path d="M12 9V3M4.9 5.9l1.4 1.4M17.7 7.3l1.4-1.4"/><path d="M17 18a5 5 0 0 0-10 0"/><path d="M2 18h2M20 18h2M2 22h20"/>'),
+  hotel:  svg('<path d="M3 21V7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v14"/><path d="M1 21h22"/><path d="M8 9h2M14 9h2M8 13h2M14 13h2M10 21v-4h4v4"/>'),
+  calendar: svg('<rect x="3" y="4" width="18" height="17" rx="4"/><path d="M3 9h18M8 2.5V6M16 2.5V6"/>','1.9'),
+  building: svg('<path d="M4 21V6a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v15M14 10h4a2 2 0 0 1 2 2v9M2 21h20M8 8h2M8 12h2M8 16h2"/>','1.9'),
+  waves:  svg('<path d="M2 16c1.5 1.2 3 1.2 4.5 0s3-1.2 4.5 0 3 1.2 4.5 0 3-1.2 4.5 0M2 20c1.5 1.2 3 1.2 4.5 0s3-1.2 4.5 0 3 1.2 4.5 0 3-1.2 4.5 0M12 3v4M12 3a4 4 0 0 1 4 4H8a4 4 0 0 1 4-4Z"/>','1.9'),
+  mountain: svg('<path d="m8 6 4-3 9 18H3L8 6Z"/><path d="m8 6 3 6-2 2 3 7"/>','1.9'),
+  check:  svg('<path d="M4.5 12.5 10 18 19.5 6.5"/>','3.2'),
+  chevD:  '<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>',
+  pin:    svg('<path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="3"/>','2.2'),
+  car:    svg('<path d="M5 11 6.5 6.5A2 2 0 0 1 8.4 5h7.2a2 2 0 0 1 1.9 1.5L19 11M5 11h14a2 2 0 0 1 2 2v4h-2.5M5 11a2 2 0 0 0-2 2v4h2.5m0 0a2 2 0 1 0 4 0m-4 0h4m6 0a2 2 0 1 0 4 0m-4 0h4"/>','2.2'),
+  bulb:   svg('<path d="M9 18h6M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.4 1 2.3h6c0-.9.4-1.8 1-2.3A7 7 0 0 0 12 2Z"/>','2'),
+  alert:  svg('<path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4M12 17h.01"/>','2'),
+  umbrella: svg('<path d="M12 2a10 10 0 0 1 10 10H2A10 10 0 0 1 12 2Z"/><path d="M12 12v7a2 2 0 0 0 4 0"/>','2'),
+  /* weather set */
+  wsun:   svg('<circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.6 4.6l1.8 1.8M17.6 17.6l1.8 1.8M19.4 4.6l-1.8 1.8M6.4 17.6l-1.8 1.8"/>','2'),
+  wpart:  svg('<path d="M12 3v1.5M5.6 5.6l1.1 1.1M3 12h1.5"/><path d="M10 8.5a4 4 0 0 1 3.9 3.1"/><path d="M8 20h9.5a3.5 3.5 0 0 0 .5-7 5 5 0 0 0-9.8 1.4A3 3 0 0 0 8 20Z"/>','2'),
+  wcloud: svg('<path d="M7 19h10.5a4 4 0 0 0 .6-8 6 6 0 0 0-11.7 1.6A3.5 3.5 0 0 0 7 19Z"/>','2'),
+  wrain:  svg('<path d="M7 15h10.5a4 4 0 0 0 .6-8 6 6 0 0 0-11.7 1.6A3.5 3.5 0 0 0 7 15Z"/><path d="M8 19v2M12 18.5v2.5M16 19v2"/>','2'),
+  wstorm: svg('<path d="M7 14.5h10.5a4 4 0 0 0 .6-8 6 6 0 0 0-11.7 1.6A3.5 3.5 0 0 0 7 14.5Z"/><path d="m13 13-2.5 4h3L11 21.5"/>','2')
+};
+
+/* ============================== DATA ============================== */
+const CAT = {
+  food:  ["food","#FFE3C7","#D9480F"], coffee:["coffee","#F3E2CF","#8A5A2B"], sight:["sight","#D6E7FF","#2F6FE4"],
+  beach: ["beach","#CFF2EE","#0B9E9E"], hike:  ["hike","#D9F1DA","#2F9E44"], night:["night","#E8DEFE","#6D3FE0"],
+  party: ["party","#FCDCF1","#D6338F"], music: ["music","#DEDEFE","#5A5AD1"], flight:["flight","#E4E4EA","#5F5F68"],
+  rest:  ["rest","#E4E4EA","#5F5F68"], tour:  ["tour","#FFDBE5","#E64980"], shop: ["shop","#FFEFC2","#C99400"],
+  jet:   ["jet","#CDEBFD","#1C7ED6"], sun:   ["sun","#FFE4C2","#F76707"]
+};
+
+/* Live forecast config — exact trip dates, pulled from Open-Meteo when the file opens */
+const WXCFG = {
+  sp:  {lat:-23.55, lon:-46.63, start:"2026-07-11", end:"2026-07-13", fallback:{rng:"59–75°F", note:"Typical July: dry & mild, cool nights.", icon:"wpart"}},
+  rio: {lat:-22.97, lon:-43.18, start:"2026-07-13", end:"2026-07-15", fallback:{rng:"66–79°F", note:"Typical July: dry season, Rio's sunniest stretch.", icon:"wsun"}},
+  mde: {lat:6.24,  lon:-75.58, start:"2026-07-16", end:"2026-07-18", fallback:{rng:"63–82°F", note:"Typical July: dry month, brief PM shower possible.", icon:"wpart"}}
+};
+const wxData = {sp:null, rio:null, mde:null}; // per city: {days:{"2026-07-11":{hi,lo,code,rain}}, hi, lo, rain}
+
+function codeIcon(c){
+  if(c===0) return "wsun";
+  if(c<=2) return "wpart";
+  if(c===3||c===45||c===48) return "wcloud";
+  if(c>=95) return "wstorm";
+  return "wrain";
+}
+function codeLabel(c){
+  if(c===0) return "Sunny";
+  if(c<=2) return "Partly cloudy";
+  if(c===3) return "Overcast";
+  if(c===45||c===48) return "Fog";
+  if(c>=95) return "Storms";
+  if(c>=80) return "Showers";
+  if(c>=61) return "Rain";
+  return "Drizzle";
+}
+
+async function loadWx(){
+  await Promise.all(Object.entries(WXCFG).map(async ([k,c])=>{
+    try{
+      const u = `https://api.open-meteo.com/v1/forecast?latitude=${c.lat}&longitude=${c.lon}&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&temperature_unit=fahrenheit&timezone=auto&start_date=${c.start}&end_date=${c.end}`;
+      const r = await fetch(u); if(!r.ok) throw 0;
+      const j = await r.json(); const d = j.daily;
+      const days = {};
+      d.time.forEach((t,i)=>{ days[t] = {hi:Math.round(d.temperature_2m_max[i]), lo:Math.round(d.temperature_2m_min[i]), code:d.weather_code[i], rain:d.precipitation_probability_max[i] ?? 0}; });
+      const his = Object.values(days);
+      wxData[k] = {days, hi:Math.max(...his.map(x=>x.hi)), lo:Math.min(...his.map(x=>x.lo)), rain:Math.max(...his.map(x=>x.rain)), code:his.sort((a,b)=>b.rain-a.rain)[0].code};
+    }catch(e){ wxData[k] = null; }
+  }));
+  render();
+}
+
+const FLIGHTS = [
+  {route:"Newark → São Paulo", date:"Fri Jul 10 · 8:30 PM", detail:"UA149 · 9h 40m · EWR → GRU · land 7:10 AM", q:"Newark Liberty International Airport EWR", ql:"EWR"},
+  {route:"São Paulo → Rio", date:"Mon Jul 13 · 8:05 PM", detail:"Azul 4915 · 1h · CGH → SDU", q:"Aeroporto de Congonhas, São Paulo", ql:"CGH"},
+  {route:"Rio → Medellín", date:"Thu Jul 16 · 1:35 AM", detail:"via Bogotá (layover only) · land MDE 8:45 AM", q:"Aeroporto Internacional Tom Jobim GIG, Rio de Janeiro", ql:"GIG"},
+  {route:"Medellín → New York", date:"Sat Jul 18 · 10:40 PM", detail:"5h 40m · MDE → JFK · arrive 5:20 AM +1", q:"Aeropuerto José María Córdova, Rionegro", ql:"MDE"}
+];
+
+const HOTELS = [
+  {city:"São Paulo", name:"Meliá Paulista", addr:"Av. Paulista, 2181", dates:"Jul 11–13", q:"Melia Paulista, Av. Paulista 2181, São Paulo"},
+  {city:"Rio de Janeiro", name:"Othon Palace Copacabana", addr:"Av. Atlântica, 3264", dates:"Jul 13–16", q:"Rio Othon Palace, Av. Atlântica 3264, Copacabana, Rio de Janeiro"},
+  {city:"Medellín", name:"York Medellín, Curio Collection", addr:"Cra 43A #17 Sur-63", dates:"Jul 16–18", q:"York Medellín Curio Collection by Hilton, Medellín"}
+];
+
+const BOOKINGS = [
+  "Christ the Redeemer — book the FIRST timed van slot online (Paineiras–Corcovado site). Sells out.",
+  "Sugarloaf — buy timed tickets online for a ~4:00–4:30 PM ascent (sunset ~5:25 PM in July).",
+  "Rio Scenarium — reserve a table for Tue Jul 14, ~8:15 PM (dinner + live samba).",
+  "Jet ski, Marina da Glória — reserve via WhatsApp 1–2 days ahead; confirm morning-of if windy.",
+  "Guatapé + El Peñol tour — book 1–2 days ahead (hotel concierge or GetYourGuide), 7:00 AM pickup.",
+  "Fogo de Chão Jardins — reserve for Sun Jul 12, 6:30 PM (rodízio night).",
+  "Dois Irmãos — line up a local guide or go with the well-marked trail + moto-taxi from Vidigal."
+];
+
+const PACKING = [
+  "Passports + a photo of each on your phone",
+  "Cash: Brazilian reais + Colombian pesos (clubs, barracas, moto-taxis prefer it)",
+  "Light jacket — SP and Medellín nights dip to ~60°F",
+  "Trail shoes for Dois Irmãos + La Piedra's 740 steps",
+  "Sunscreen + sunglasses (Rio dry-season sun is strong)",
+  "Portable charger — long Uber days, heavy camera use",
+  "Swimsuits ×2 (beach club days back-to-back)"
+];
+
+/* ---------- SÃO PAULO ---------- */
+const SP_DAYS = [
+ {label:"Sat, Jul 11", date:"Saturday, July 11", iso:"2026-07-11", theme:"Arrival Day", wx:"sp",
+  items:[
+   {time:"7:10 AM", cat:"flight", t:"Land at GRU", s:"Uber to Meliá Paulista · 30 km · 45–60 min · R$90–120 (~$16–22)", p:"—", u:"", q:"Melia Paulista, Av. Paulista 2181, São Paulo",
+    note:"Rooms likely won't be ready — store bags, freshen up in the lobby, head out."},
+   {time:"9:00 AM", cat:"coffee", t:"Friends Brunch", s:"Al. Sarutaiá, 423 · Jardins · eggs, pão de queijo, juices", p:"R$60–90", u:"≈ $11–16", q:"Friends Brunch, Alameda Sarutaiá 423, São Paulo", tr:"Uber · 1.2 km · 6 min · R$12 (~$2)"},
+   {time:"10:30 AM", cat:"sight", t:"Ibirapuera Park", s:"Coconut water, lake loop, people-watching — SP's Central Park", p:"Free", u:"", q:"Parque Ibirapuera, São Paulo", tr:"Uber · 4.7 km · 15 min · R$20 (~$4)"},
+   {time:"12:30 PM", cat:"food", t:"Lunch at Bella Paulista", s:"R. Haddock Lobo, 354 · 24-hr icon, huge menu", p:"R$45–70", u:"≈ $8–13", q:"Padaria Bella Paulista, Rua Haddock Lobo 354, São Paulo", tr:"Walk · 500 m"},
+   {time:"2:00 PM", cat:"sight", t:"MASP", s:"Av. Paulista, 1578 · Brazil's best art museum, glass easels", p:"R$50", u:"≈ $9", q:"MASP, Avenida Paulista 1578, São Paulo", tr:"Uber · 5 km · 15 min · R$18 (~$3)",
+    note:"Buy tickets online to skip the line."},
+   {time:"6:00 PM", cat:"food", t:"Altruísta Osteria", s:"Al. Campinas, 952 · top-rated Italian, fresh pasta", p:"R$120–180", u:"≈ $22–33", q:"Altruísta Osteria, Alameda Campinas 952, São Paulo", tr:"Uber · 1.4 km · 8 min · R$12 (~$2)"},
+   {time:"8:30 PM", cat:"night", t:"The View Bar", s:"Al. Santos, 981 · 30th floor · skyline + live piano", p:"R$40–70 / drink", u:"≈ $7–13", q:"The View Bar, Alameda Santos 981, São Paulo", tr:"Uber · 6.5 km · 20 min · R$25 (~$5)"},
+   {time:"10:30 PM", cat:"music", t:"Vila Madalena bar crawl", s:"Armazém Piola → Boteco Todos os Santos → wherever the night goes", p:"R$30–50 cover", u:"≈ $5–9", q:"Rua Aspicuelta, Vila Madalena, São Paulo"}
+  ]},
+ {label:"Sun, Jul 12", date:"Sunday, July 12", iso:"2026-07-12", theme:"Vila Madalena + Rodízio Night", wx:"sp",
+  items:[
+   {time:"Flexible", cat:"coffee", t:"Coffee at Mug.sp", s:"Av. Paulista, 1079 · specialty espresso, slow start", p:"R$25–40", u:"≈ $5–7", q:"Mug.sp café, Avenida Paulista 1079, São Paulo", tr:"Walk from hotel · 5 min"},
+   {time:"12:00 PM", cat:"tour", t:"Beco do Batman", s:"R. Medeiros de Albuquerque · SP's famous street-art alley", p:"Free", u:"", q:"Beco do Batman, Vila Madalena, São Paulo", tr:"Uber · 6 km · 18 min · R$22 (~$4)"},
+   {time:"1:30 PM", cat:"food", t:"Pé de Manga", s:"R. Arapiraca, 152 · long Sunday lunch under a giant mango tree", p:"R$70–100", u:"≈ $13–18", q:"Pé de Manga, Rua Arapiraca 152, São Paulo", tr:"Walk · 10 min"},
+   {time:"3:30 PM", cat:"shop", t:"Oscar Freire or hotel pool", s:"Jardins boutiques — or nap; tonight runs late", p:"Varies", u:"", q:"Rua Oscar Freire, São Paulo", tr:"Uber · 5 km · 15 min · R$18 (~$3)"},
+   {time:"6:30 PM", cat:"food", t:"Fogo de Chão — rodízio", s:"R. Augusta, 2077 · Jardins · the authentic all-you-can-eat churrasco: picanha, fraldinha, lamb carved tableside", p:"R$250–350 pp", u:"≈ $45–64", q:"Fogo de Chão Jardins, Rua Augusta 2077, São Paulo", tr:"Uber · 2 km · 10 min · R$14 (~$3)",
+    note:"Signature Brazil meal — pace yourselves and flip the card to red between rounds. Reserve online."},
+   {time:"9:00 PM", cat:"night", t:"300 Sky Bar", s:"Av. Faria Lima, 4509 · 18th floor · cocktails over the skyline", p:"R$60–100 cover", u:"≈ $11–18", q:"300 Sky Bar, Av. Brigadeiro Faria Lima 4509, São Paulo", tr:"Uber · 5 km · 15 min · R$20 (~$4)"},
+   {time:"10:30 PM", cat:"party", t:"57 House Friends Club", s:"Al. dos Aicás, 1293 · Moema · gentlemen's club", p:"R$300–500 total", u:"≈ $55–90", q:"Alameda dos Aicás 1293, Moema, São Paulo", tr:"Uber · 5 km · 15 min · R$20 (~$4)"}
+  ]},
+ {label:"Mon, Jul 13", date:"Monday, July 13", iso:"2026-07-13", theme:"Mercadão + Fly to Rio", wx:"sp",
+  items:[
+   {time:"11:00 AM", cat:"rest", t:"Check out + store bags", s:"Meliá Paulista — keep the day light and mobile", p:"—", u:"", q:"Melia Paulista, Av. Paulista 2181, São Paulo"},
+   {time:"12:00 PM", cat:"food", t:"Mercado Municipal (Mercadão)", s:"R. Cantareira, 306 · Centro — the classic SP market lunch", p:"R$60–100", u:"≈ $11–18", q:"Mercado Municipal de São Paulo, Rua Cantareira 306", tr:"Uber · 7 km · 20 min · R$25 (~$5)",
+    note:"The hit list: mortadella sandwich at Hocca Bar or Bar do Mané, pastel de bacalhau (cod pastry), Brazilian cheeses at the deli stalls, and let the fruit vendors cut you samples of tropical fruit upstairs — agree on price first."},
+   {time:"2:30 PM", cat:"shop", t:"Back to Paulista — free hour", s:"Grab bags, last coffee, or a quick Jardins wander", p:"—", u:"", q:"Avenida Paulista, São Paulo", tr:"Uber · 7 km · 20 min · R$25 (~$5)"},
+   {time:"5:30 PM", cat:"flight", t:"Uber to Congonhas (CGH)", s:"Leave a buffer — Monday rush hour is real", p:"R$45–65", u:"≈ $8–12", q:"Aeroporto de Congonhas, São Paulo"},
+   {time:"8:05 PM", cat:"flight", t:"Fly CGH → SDU", s:"Azul 4915 · 1h · land Rio 9:05 PM · Uber to Copacabana 20 min · R$35–45 (~$6–8)", p:"—", u:"", q:"Rio Othon Palace, Av. Atlântica 3264, Copacabana"},
+   {time:"10:15 PM", cat:"food", t:"Late dinner at Joaquina", s:"Av. Atlântica, 974 · beachfront carioca classics, caipirinhas", p:"R$60–90", u:"≈ $11–16", q:"Joaquina Bar e Restaurante, Av. Atlântica 974, Rio de Janeiro", tr:"Uber · 2.5 km · 8 min · R$15 (~$3)"}
+  ]}
+];
+
+/* ---------- RIO ---------- */
+const RIO_DAYS = [
+ {label:"Tue, Jul 14", date:"Tuesday, July 14", iso:"2026-07-14", theme:"Sunrise Christ → Sunset Sugarloaf", wx:"rio",
+  items:[
+   {time:"6:45 AM", cat:"sight", t:"Uber to Paineiras–Corcovado", s:"Othon Palace → visitor center · 8 km · 20 min · R$40 (~$7)", p:"—", u:"", q:"Paineiras Corcovado, Rio de Janeiro"},
+   {time:"7:30 AM", cat:"sun", t:"Christ the Redeemer — first vans up", s:"Book the earliest timed slot. Morning light on the statue, and you beat 90% of the crowds", p:"R$140–180", u:"≈ $25–33", q:"Cristo Redentor, Rio de Janeiro", tr:"Uber back to Copacabana · 8 km · 20 min · R$40 (~$7)", sunset:true,
+    note:"Early wake-up, big payoff: by 10 AM the platform is shoulder-to-shoulder. You'll have it nearly to yourselves."},
+   {time:"10:30 AM", cat:"beach", t:"Copacabana Beach morning", s:"Postos 4–5, steps from the hotel · chairs + umbrella from a barraca, água de coco", p:"R$30–50", u:"≈ $5–9", q:"Copacabana Beach Posto 4, Rio de Janeiro", tr:"Walk across Av. Atlântica"},
+   {time:"12:30 PM", cat:"food", t:"Barraca lunch on the sand", s:"Grilled queijo coalho, pastéis, shrimp skewers + caipirinhas from the beach vendors", p:"R$50–80", u:"≈ $9–15", q:"Copacabana Beach, Rio de Janeiro"},
+   {time:"3:45 PM", cat:"sight", t:"Uber to Urca", s:"Copacabana → Sugarloaf cable car base · 7 km · 20 min · R$30 (~$5)", p:"—", u:"", q:"Bondinho Pão de Açúcar, Urca, Rio de Janeiro"},
+   {time:"4:15 PM", cat:"sun", t:"Sugarloaf — timed for sunset", s:"Two-stage cable car up by ~4:30. Sunset ≈ 5:25 PM in July — city lights flicker on as you descend", p:"R$150–180", u:"≈ $27–33", q:"Pão de Açúcar, Rio de Janeiro", sunset:true,
+    note:"The redesigned sunset evening: golden hour over Guanabara Bay from the summit is the best view in Rio. Buy timed tickets online."},
+   {time:"6:45 PM", cat:"night", t:"Mureta da Urca (optional)", s:"Beer on the seawall with locals, 10 min from the cable car — skip if hungry", p:"R$15–25", u:"≈ $3–5", q:"Mureta da Urca, Rio de Janeiro", tr:"Uber to Lapa · 9 km · 25 min · R$35 (~$6)"},
+   {time:"8:15 PM", cat:"music", t:"Rio Scenarium — samba dinner", s:"R. do Lavradio, 20 · Lapa · antiques-filled mansion, dinner + live samba orchestra + dance floor", p:"R$160–220 all-in", u:"≈ $29–40", q:"Rio Scenarium, Rua do Lavradio 20, Rio de Janeiro", tr:"Uber home · 8 km · 20 min · R$35 (~$6)",
+    note:"Replaces the plain samba-bar stop: you eat well while the band plays, then the tables clear and it becomes the night out. Reserve a table."},
+   {time:"11:30 PM", cat:"night", t:"Lapa bars (optional overtime)", s:"Leviano Bar / the arches strip — you're already there", p:"R$10–20 cover", u:"≈ $2–4", q:"Arcos da Lapa, Rio de Janeiro"}
+  ]},
+ {label:"Wed, Jul 15", date:"Wednesday, July 15", iso:"2026-07-15", theme:"Hike + Jet Ski + Ipanema · tight night", wx:"rio",
+  items:[
+   {time:"7:30 AM", cat:"hike", t:"Dois Irmãos hike", s:"Uber to Vidigal (6 km · 20 min · R$35 ~$6), moto-taxi up (R$10 ~$2), ~1 hr climb. Best free view in Rio", p:"R$10 + guide opt.", u:"≈ $2", q:"Trilha Dois Irmãos, Vidigal, Rio de Janeiro", tr:"Uber back to hotel · 6 km · 20 min · R$35 (~$6)",
+    note:"Go early: cooler, clearer, quieter. Trail is well-trodden; a guide is nice-to-have, not need-to-have."},
+   {time:"10:45 AM", cat:"rest", t:"Quick shower + reset", s:"Othon Palace — swap hiking shoes for swim gear", p:"—", u:"", q:"Rio Othon Palace, Copacabana"},
+   {time:"11:45 AM", cat:"jet", t:"Jet ski — Marina da Glória", s:"Ride Guanabara Bay with Sugarloaf views · ~30–60 min per ski", p:"R$450–600 / ski", u:"≈ $80–110", q:"Marina da Glória, Rio de Janeiro", tr:"Uber · 7 km · 20 min · R$30 (~$5)",
+    note:"Weather-permitting slot: July is dry season so odds are good. Reserve via WhatsApp 1–2 days ahead (operators at the marina, e.g. Jet Fun Rio); bring cash + ID. If windy, they'll reschedule — fallback is more beach time."},
+   {time:"2:00 PM", cat:"beach", t:"Sel d'Ipanema beach club", s:"Av. Vieira Souto · loungers on the sand, ceviche, caipirinhas — Ipanema's proper beach-club day", p:"R$150–250", u:"≈ $27–45", q:"Sel d'Ipanema, Avenida Vieira Souto, Rio de Janeiro", tr:"Uber · 8 km · 22 min · R$35 (~$6)"},
+   {time:"5:10 PM", cat:"sun", t:"Sunset at Pedra do Arpoador", s:"10-min walk from Sel — the rock between Ipanema and Copacabana where the whole beach applauds the sunset", p:"Free", u:"", q:"Pedra do Arpoador, Rio de Janeiro", sunset:true},
+   {time:"6:30 PM", cat:"food", t:"Early dinner — Nino Cucina", s:"R. Barão da Torre, 490 · excellent Italian, keep it light — long night of travel ahead", p:"R$90–130", u:"≈ $16–24", q:"Nino Cucina, Rua Barão da Torre 490, Rio de Janeiro", tr:"Uber to hotel · 4 km · 12 min · R$20 (~$4)"},
+   {time:"8:30 PM", cat:"rest", t:"Pack + check out", s:"Shower, repack, settle the bill — don't cut this short", p:"—", u:"", q:"Rio Othon Palace, Copacabana"},
+   {time:"10:15 PM", cat:"flight", t:"Uber to GIG", s:"22 km · 40–55 min · R$90–120 (~$16–22) — leave by 10:30 at the absolute latest", p:"—", u:"", q:"Aeroporto Internacional Tom Jobim GIG, Rio de Janeiro"},
+   {time:"1:35 AM", cat:"flight", t:"Fly Rio → Bogotá → Medellín", s:"Layover only in BOG · land MDE 8:45 AM — sleep on the first leg", p:"—", u:"", q:"Aeropuerto José María Córdova, Rionegro"}
+  ]}
+];
+
+/* ---------- MEDELLÍN ---------- */
+const MDE_DAYS = [
+ {label:"Thu, Jul 16", date:"Thursday, July 16", iso:"2026-07-16", theme:"Arrival + Comuna 13", wx:"mde",
+  items:[
+   {time:"8:45 AM", cat:"flight", t:"Land MDE", s:"José María Córdova → El Poblado · 35 km · 45–55 min · COP 90–120k (~$22–29)", p:"—", u:"", q:"York Medellín Curio Collection by Hilton"},
+   {time:"10:15 AM", cat:"coffee", t:"Pergamino Café", s:"Cra 37 #8A-37 · Medellín's flagship specialty roaster — single-origin pour-overs, great pastries", p:"COP 15–30k", u:"≈ $4–7", q:"Pergamino Café, Carrera 37 8A-37, Medellín", tr:"Uber · 3 km · 12 min · COP 10k (~$2.50)",
+    note:"Coffee HQ for the trip. Also nearby if you want variety: Café Velvet, Urbania, Hija Mía (that one's Saturday brunch)."},
+   {time:"11:30 AM", cat:"rest", t:"Check in + reset", s:"York Medellín · Cra 43A #17 Sur-63 — shower off the red-eye", p:"—", u:"", q:"York Medellín Curio Collection by Hilton"},
+   {time:"1:00 PM", cat:"food", t:"Lunch at Belisario", s:"Cra 35 #7-114 · Provenza · wood-fired grilled meats, always buzzing", p:"COP 60–90k", u:"≈ $15–22", q:"Belisario Salvaje, Carrera 35 7-114, Medellín", tr:"Uber · 12 km · 25–30 min · COP 30k (~$7)"},
+   {time:"3:00 PM", cat:"tour", t:"Comuna 13 graffiti tour", s:"Outdoor escalators, street art, hip-hop history — take a guided walking tour, tip-based or booked", p:"COP 25–70k", u:"≈ $6–17", q:"Comuna 13 Graffiti Tour, Medellín", tr:"Uber back to Poblado · 12 km · 30 min · COP 30k (~$7)"},
+   {time:"8:00 PM", cat:"food", t:"Dinner at Mombasa", s:"Vía Primavera, Cra 37 #8A-83 · lively Provenza spot, strong cocktails", p:"COP 90–130k", u:"≈ $22–32", q:"Mombasa Restaurante, Carrera 37 8A-83, Medellín", tr:"Walk · 5 min"},
+   {time:"10:00 PM", cat:"night", t:"NDN Rooftop", s:"Cra 34 #8A-10 · skyline views, DJ sets", p:"COP 40–70k / drink", u:"≈ $10–17", q:"NDN Rooftop, Carrera 34 8A-10, Medellín", tr:"Walk · 8 min"},
+   {time:"12:00 AM", cat:"party", t:"Gusto Night Club", s:"Parque Lleras · reggaetón till late", p:"COP 20k cover", u:"≈ $5", q:"Parque Lleras, Medellín"}
+  ]},
+ {label:"Fri, Jul 17", date:"Friday, July 17", iso:"2026-07-17", theme:"Guatapé Day Trip", wx:"mde",
+  items:[
+   {time:"6:30 AM", cat:"flight", t:"Uber to tour pickup", s:"El Poblado meeting point · 3 km · 10 min · COP 12k (~$3)", p:"—", u:"", q:"Parque El Poblado, Medellín"},
+   {time:"7:00 AM", cat:"tour", t:"Guatapé + El Peñol full-day tour", s:"Climb La Piedra's 740 steps for the lake-maze view, boat ride, lunch, wander the painted zócalos of Guatapé town", p:"COP 150–220k", u:"≈ $37–54", q:"Piedra del Peñol, Guatapé", tr:"Return by tour van ~6:30 PM",
+    note:"July mornings are usually clear here — the early start is deliberate: summit before any afternoon clouds, and beat the tour-bus crush at the stairs."},
+   {time:"7:45 PM", cat:"food", t:"Cannario Rooftop", s:"Cra 29C · Hotel Blues Living · sushi + DJ, easy landing after the long day", p:"COP 80–120k", u:"≈ $20–29", q:"Cannario Rooftop, Medellín", tr:"Walk · 6 min"},
+   {time:"11:00 PM", cat:"night", t:"Ene Rooftop", s:"Cra 35 #8A-72 · hookah, cocktails, open air", p:"COP 40–70k", u:"≈ $10–17", q:"Ene Rooftop, Carrera 35 8A-72, Medellín", tr:"Uber · 2 km · 8 min · COP 9k (~$2)"},
+   {time:"12:30 AM", cat:"party", t:"La Isla Club", s:"Cl. 19A · Buenos Aires · last big night of the trip — send it", p:"~COP 50k cover", u:"≈ $12", q:"La Isla Club, Medellín"}
+  ]},
+ {label:"Sat, Jul 18", date:"Saturday, July 18", iso:"2026-07-18", theme:"Recovery + Fly Home", wx:"mde",
+  items:[
+   {time:"10:00 AM", cat:"coffee", t:"Brunch at Hija Mía", s:"Cra 35 #7-75 · specialty roastery + the best brunch plates in Poblado", p:"COP 50–80k", u:"≈ $12–20", q:"Hija Mía Coffee Roasters, Carrera 35, Medellín", tr:"Walk · 5 min"},
+   {time:"1:00 PM", cat:"shop", t:"Free block", s:"Hotel pool, Provenza shopping, or a massage — recover properly", p:"Varies", u:"", q:"Provenza, El Poblado, Medellín"},
+   {time:"4:30 PM", cat:"rest", t:"Check out + store bags", s:"York Medellín", p:"—", u:"", q:"York Medellín Curio Collection by Hilton"},
+   {time:"5:30 PM", cat:"food", t:"Farewell dinner — Victoria Roof Garden", s:"Cra 35 #8A-73 · early rooftop dinner with the city lighting up below", p:"COP 90–130k", u:"≈ $22–32", q:"Victoria Roof Garden, Carrera 35 8A-73, Medellín", tr:"Uber to MDE · 35 km · 50–60 min · COP 100–130k (~$24–32)",
+    note:"Leave Poblado by 7:30 PM — the airport is up the mountain and Saturday traffic can add 20 min."},
+   {time:"10:40 PM", cat:"flight", t:"Fly MDE → JFK", s:"5h 40m · land 5:20 AM Sun Jul 19 — welcome home", p:"—", u:"", q:"Aeropuerto José María Córdova, Rionegro"}
+  ]}
+];
+
+const CITIES = {
+  sp:  {name:"São Paulo", accent:"#FF5C33", grad:"var(--gsp)",  days:SP_DAYS},
+  rio: {name:"Rio",       accent:"#0A84FF", grad:"var(--grio)", days:RIO_DAYS},
+  mde: {name:"Medellín",  accent:"#0FAE5F", grad:"var(--gmde)", days:MDE_DAYS}
+};
+
+/* ============================== STATE ============================== */
+let tab = "overview";
+const dayIdx = {sp:0, rio:0, mde:0};
+const checks = {book:new Set(), pack:new Set()};
+
+/* ============================== RENDER ============================== */
+function rowHTML(it, id){
+  const [ic,bgc,fgc] = CAT[it.cat] || CAT.sight;
+  const hasExp = it.tr || it.note || it.q;
+  return `
+  <div id="w${id}">
+    <button class="row" onclick="toggleRow('${id}')" ${hasExp?'':'style="cursor:default"'}>
+      <div class="glyph" style="background:${bgc};color:${fgc}">${ICO[ic]}</div>
+      <div class="mid">
+        <div class="t">${esc(it.t)}</div>
+        <div class="s">${esc(it.s)}</div>
+      </div>
+      <div class="end">
+        <span class="time ${it.sunset?'sunset':''}">${esc(it.time)}</span>
+        <span class="price">${esc(it.p)}</span>
+        ${it.u?`<span class="usd">${esc(it.u)}</span>`:''}
+      </div>
+      ${hasExp? ICO.chevD : ''}
+    </button>
+    ${hasExp?`<div class="exp" id="e${id}"><div class="exp-in">
+        ${it.note?`<div class="note">${ICO.bulb}<span>${esc(it.note)}</span></div>`:''}
+        ${it.tr?`<div class="transport">${ICO.car}<span>${esc(it.tr)}</span></div>`:''}
+        ${it.q?`<div class="acts">
+          <a class="maps" href="${gm(it.q)}" target="_blank" rel="noopener">${ICO.pin} Maps</a>
+          <a class="uber" href="${ub(it.q)}" target="_blank" rel="noopener">${ICO.car} Uber here</a>
+        </div>`:''}
+    </div></div>`:''}
+  </div>`;
+}
+
+function toggleRow(id){
+  const w = document.getElementById("w"+id), e = document.getElementById("e"+id);
+  if(!e) return;
+  const open = w.classList.toggle("open");
+  e.style.maxHeight = open ? e.scrollHeight + "px" : "0px";
+}
+
+function dayWxChips(d){
+  const live = wxData[d.wx] && wxData[d.wx].days[d.iso];
+  if(live){
+    let chips = `<span class="wx">${ICO[codeIcon(live.code)]} ${codeLabel(live.code)} · ${live.lo}–${live.hi}°F</span>`;
+    if(live.rain >= 40) chips += `<span class="wx umb">${ICO.umbrella} ${live.rain}% rain — pack an umbrella</span>`;
+    else if(live.rain >= 20) chips += `<span class="wx">${ICO.wrain} ${live.rain}% rain chance</span>`;
+    return chips;
+  }
+  const f = WXCFG[d.wx].fallback;
+  return `<span class="wx">${ICO[f.icon]} ${f.rng} typical</span>`;
+}
+
+function cityHTML(key){
+  const c = CITIES[key], di = dayIdx[key], d = c.days[di];
+  const pills = c.days.map((dd,i)=>
+    `<button class="pill ${i===di?'on':''}" style="${i===di?`background:${c.grad}`:''}" onclick="setDay('${key}',${i})">${dd.label}</button>`).join("");
+  const warn = (key==='rio' && di===1)
+    ? `<div class="callout warn">${ICO.alert}<span><b>Tight night.</b> Beach day → early dinner → wheels to GIG by 10:15 PM for a 1:35 AM flight. Don't let Arpoador sunset drinks turn into a second dinner.</span></div>` : "";
+  const coffee = (key==='mde' && di===0)
+    ? `<div class="callout tip">${ICO.coffee}<span><b>Poblado coffee shortlist</b> — all a short walk or ~$2.50 Uber from the York: Pergamino (Cra 37), Hija Mía (Cra 35), Café Velvet, Urbania Café. Slot one into any morning.</span></div>` : "";
+  return `<div class="page">
+    <div class="pills">${pills}</div>
+    <div class="banner" style="background:${c.grad}">
+      <div class="d">${d.date}</div>
+      <div class="theme">${d.theme}</div>
+      <div class="chips">${dayWxChips(d)}</div>
+    </div>
+    ${warn}
+    <div class="card">${d.items.map((it,i)=>rowHTML(it, key+di+"_"+i)).join("")}</div>
+    ${coffee}
+  </div>`;
+}
+
+function checklistHTML(list, group){
+  return `<div class="card">${list.map((t,i)=>`
+    <button class="check ${checks[group].has(i)?'done':''}" onclick="toggleCheck('${group}',${i},this)">
+      <span class="box">${ICO.check}</span><span class="txt">${esc(t)}</span>
+    </button>`).join("")}</div>`;
+}
+
+function toggleCheck(group,i,el){
+  checks[group].has(i) ? checks[group].delete(i) : checks[group].add(i);
+  el.classList.toggle("done");
+}
+
+function overviewHTML(){
+  const wxGrads = {sp:"var(--gsp)", rio:"var(--grio)", mde:"var(--gmde)"};
+  const anyUmb = Object.keys(WXCFG).filter(k=>wxData[k] && wxData[k].rain>=40).map(k=>CITIES[k].name);
+  const live = Object.values(wxData).some(Boolean);
+  return `<div class="page">
+    <div class="hero">
+      <div class="k">9 days · 3 cities · 3 travelers</div>
+      <h2>South America, done right.</h2>
+      <p>Sunrise landmarks, beach-club afternoons, and out most nights.</p>
+      <div class="legs">
+        <div class="leg"><b>São Paulo</b><span>Jul 11–13</span></div>
+        <div class="leg"><b>Rio</b><span>Jul 13–16</span></div>
+        <div class="leg"><b>Medellín</b><span>Jul 16–18</span></div>
+      </div>
+    </div>
+
+    <div class="eyebrow">${live ? "Forecast for your dates · live" : "July weather · typical (forecast loads online)"}</div>
+    <div class="wxgrid">
+      ${Object.entries(WXCFG).map(([k,c])=>{
+        const w = wxData[k];
+        if(w) return `<div class="wxcard" style="background:${wxGrads[k]}">
+          <div class="c">${CITIES[k].name}</div>
+          <div class="big">${ICO[codeIcon(w.code)]}</div>
+          <div class="rng">${w.lo}–${w.hi}°F</div>
+          <div class="d">${codeLabel(w.code)} · up to ${w.rain}% rain chance</div>
+        </div>`;
+        return `<div class="wxcard" style="background:${wxGrads[k]}">
+          <div class="c">${CITIES[k].name}</div>
+          <div class="big">${ICO[c.fallback.icon]}</div>
+          <div class="rng">${c.fallback.rng}</div>
+          <div class="d">${c.fallback.note}</div>
+        </div>`;
+      }).join("")}
+    </div>
+    ${live
+      ? (anyUmb.length
+          ? `<div class="callout warn">${ICO.umbrella}<span><b>Umbrella alert:</b> real rain chances on your dates in ${anyUmb.join(" and ")} — check the day banners in ${anyUmb.length>1?"those tabs":"that tab"} for exactly which day, and pack a compact umbrella.</span></div>`
+          : `<div class="callout tip">${ICO.check}<span><b>No umbrella needed as of now:</b> every day of the trip shows under 40% rain chance. Chances can shift — this refreshes with the live forecast each time you open the file.</span></div>`)
+      : `<div class="callout tip">${ICO.wrain}<span><b>Forecast note:</b> open this file with internet and the cards above switch from typical July averages to the actual forecast for your exact dates, including per-day umbrella alerts on each city's day banner.</span></div>`}
+
+    <div class="eyebrow">Flights</div>
+    <div class="card">${FLIGHTS.map(f=>`
+      <div class="row" style="cursor:default">
+        <div class="glyph" style="background:#E4E4EA;color:#5F5F68">${ICO.flight}</div>
+        <div class="mid"><div class="t">${esc(f.route)}</div><div class="s">${esc(f.detail)}</div></div>
+        <div class="end">
+          <span class="time">${esc(f.date)}</span>
+          <div class="mini">
+            <a class="maps" href="${gm(f.q)}" target="_blank" rel="noopener" aria-label="Open ${f.ql} in Maps">${ICO.pin}</a>
+            <a class="uber" href="${ub(f.q)}" target="_blank" rel="noopener" aria-label="Uber to ${f.ql}">${ICO.car}</a>
+          </div>
+        </div>
+      </div>`).join("")}</div>
+    <div class="callout tip">${ICO.car}<span><b>Tap the black car on any flight</b> to open Uber pre-loaded with that departure airport — one tap when it's time to head out.</span></div>
+
+    <div class="eyebrow">Hotels</div>
+    <div class="card">${HOTELS.map(h=>`
+      <div class="row" style="cursor:default">
+        <div class="glyph" style="background:#E4E4EA;color:#5F5F68">${ICO.hotel}</div>
+        <div class="mid"><div class="t">${esc(h.name)}</div><div class="s">${esc(h.addr)} · ${esc(h.city)}</div></div>
+        <div class="end">
+          <span class="time">${esc(h.dates)}</span>
+          <div class="mini">
+            <a class="maps" href="${gm(h.q)}" target="_blank" rel="noopener" aria-label="Open ${esc(h.name)} in Maps">${ICO.pin}</a>
+            <a class="uber" href="${ub(h.q)}" target="_blank" rel="noopener" aria-label="Uber to ${esc(h.name)}">${ICO.car}</a>
+          </div>
+        </div>
+      </div>`).join("")}</div>
+
+    <div class="eyebrow">Book before you go</div>
+    ${checklistHTML(BOOKINGS,"book")}
+
+    <div class="eyebrow">Packing</div>
+    ${checklistHTML(PACKING,"pack")}
+
+    <div class="foot">USD conversions are approximate: R$5.50 ≈ $1 · COP 4,100 ≈ $1.<br>Forecast: Open-Meteo, refreshes each open · Checklist ticks reset when the file is reopened.</div>
+  </div>`;
+}
+
+/* ============================== SHELL ============================== */
+const TABS = [
+  {key:"overview", label:"Overview", icon:ICO.calendar},
+  {key:"sp",  label:"São Paulo", icon:ICO.building},
+  {key:"rio", label:"Rio", icon:ICO.waves},
+  {key:"mde", label:"Medellín", icon:ICO.mountain}
+];
+
+function crumbHTML(){
+  if(tab==="overview") return `
+    <span class="chip">${ICO.calendar} Jul 10–19</span>
+    <span class="chip"><i class="dot" style="background:var(--gsp)"></i>SP<span class="arr">›</span><i class="dot" style="background:var(--grio)"></i>Rio<span class="arr">›</span><i class="dot" style="background:var(--gmde)"></i>MDE</span>
+    <span class="chip">3 travelers</span>`;
+  const c = CITIES[tab];
+  const dates = {sp:"Jul 11–13", rio:"Jul 13–16", mde:"Jul 16–18"}[tab];
+  const hotel = {sp:"Meliá Paulista", rio:"Othon Palace", mde:"The York"}[tab];
+  return `
+    <span class="chip"><i class="dot" style="background:${c.grad}"></i>${dates}</span>
+    <span class="chip">${ICO.hotel} ${hotel}</span>
+    <span class="chip">${c.days.length} days</span>`;
+}
+
+function render(){
+  const title = document.getElementById("navTitle");
+  title.textContent = tab==="overview" ? "Trip" : CITIES[tab].name;
+  title.className = tab==="overview" ? "" : "city";
+  title.style.color = tab==="overview" ? "" : CITIES[tab].accent;
+  document.getElementById("crumb").innerHTML = crumbHTML();
+  document.getElementById("root").innerHTML = tab==="overview" ? overviewHTML() : cityHTML(tab);
+  document.getElementById("tabbar").innerHTML = TABS.map(t=>`
+    <button class="${t.key===tab?'on':''}" onclick="setTab('${t.key}')" ${t.key===tab && CITIES[t.key]?`style="color:${CITIES[t.key].accent}"`:''}>
+      ${t.icon}<span>${t.label}</span>
+    </button>`).join("");
+  window.scrollTo({top:0});
+}
+function setTab(k){ tab=k; render(); }
+function setDay(k,i){ dayIdx[k]=i; render(); }
+render();
+loadWx();
+</script>
+</body>
+</html>
