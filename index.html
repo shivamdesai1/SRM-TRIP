@@ -76,7 +76,8 @@
   .hero h2{font-size:26px;font-weight:800;letter-spacing:-.02em;margin:6px 0 2px}
   .hero p{font-size:14px;font-weight:500;opacity:.94}
   .hero .legs{display:flex;gap:8px;margin-top:16px;position:relative;z-index:1}
-  .hero .leg{flex:1;background:rgba(255,255,255,.18);border:0.5px solid rgba(255,255,255,.3);border-radius:14px;padding:10px 10px;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+  .hero .leg{flex:1;background:rgba(255,255,255,.18);border:0.5px solid rgba(255,255,255,.3);border-radius:14px;padding:10px 10px;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);text-align:left;color:#fff;transition:transform .15s, background .15s}
+  .hero .leg:active{transform:scale(.95);background:rgba(255,255,255,.3)}
   .hero .leg b{display:block;font-size:15px;font-weight:700}
   .hero .leg span{font-size:11.5px;font-weight:500;opacity:.92}
 
@@ -631,14 +632,14 @@ function overviewHTML(){
   const live = Object.values(wxData).some(Boolean);
   return `<div class="page">
     <div class="hero">
-      <div class="stamp">✦ Boys trip · Jul 10–19</div>
+      <div class="stamp">✦ Group trip · Jul 10–19</div>
       <div class="k">9 days · 3 cities · 2 countries · 0 wasted hours</div>
-      <h2>Samba, summits<br>& city lights.</h2>
-      <p>Sunrise at Christ. Jet skis under Sugarloaf. Rooftops in Poblado till the sun threatens to come back up.</p>
+      <h2>Brazil &amp; Colombia<br>in nine days.</h2>
+      <p>Out of Newark Friday night, landing in São Paulo Saturday morning. Two nights there, three in Rio, two in Medellín, then an overnight flight home into JFK at 5:20 AM on the 19th. Flights, hotels, live weather, and day-by-day plans are all below — tap a city for its full itinerary.</p>
       <div class="legs">
-        <div class="leg"><b>São Paulo</b><span>Jul 11–13 · the warm-up</span></div>
-        <div class="leg"><b>Rio</b><span>Jul 13–16 · the main event</span></div>
-        <div class="leg"><b>Medellín</b><span>Jul 16–18 · the encore</span></div>
+        <button class="leg" onclick="setTab('sp')"><b>São Paulo ›</b><span>Jul 11–13 · the warm-up</span></button>
+        <button class="leg" onclick="setTab('rio')"><b>Rio ›</b><span>Jul 13–16 · the main event</span></button>
+        <button class="leg" onclick="setTab('mde')"><b>Medellín ›</b><span>Jul 16–18 · the encore</span></button>
       </div>
     </div>
 

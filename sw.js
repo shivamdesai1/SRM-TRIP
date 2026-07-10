@@ -1,5 +1,5 @@
 /* SRM-TRIP offline cache — network-first, falls back to cache */
-const CACHE = "srm-trip-v3";
+const CACHE = "srm-trip-v4";
 self.addEventListener("install", e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(["./", "./index.html"])).catch(()=>{}));
   self.skipWaiting();
