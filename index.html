@@ -18,9 +18,9 @@
     --r:20px; --shadow:0 1px 2px rgba(0,0,0,.04),0 4px 16px rgba(0,0,0,.06);
   }
   *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-  html{height:100%;overflow:hidden}
+  html{height:100%;overflow:hidden;background:#fff}
   body{
-    height:100vh;height:100dvh;
+    height:100vh;height:100dvh;height:var(--app-h,100dvh);
     overflow:hidden;position:relative;width:100%;
     font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display",system-ui,sans-serif;
     background:var(--bg); color:var(--ink);
@@ -211,6 +211,18 @@
 <div class="tabbar" id="tabbar"></div>
 
 <script>
+/* ---- true viewport height (iOS reports vh/dvh unreliably in standalone/Safari) ---- */
+function setAppH(){
+  const h = Math.max(window.innerHeight || 0, (window.visualViewport && window.visualViewport.height) || 0);
+  if(h) document.documentElement.style.setProperty("--app-h", h + "px");
+}
+setAppH();
+window.addEventListener("resize", setAppH);
+window.addEventListener("orientationchange", () => setTimeout(setAppH, 250));
+window.addEventListener("pageshow", setAppH);
+if(window.visualViewport) window.visualViewport.addEventListener("resize", setAppH);
+setTimeout(setAppH, 300); setTimeout(setAppH, 1000);
+
 /* ============================== HELPERS ============================== */
 const gm = q => "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(q);
 const ub = q => "https://m.uber.com/ul/?action=setPickup&pickup=my_location&dropoff%5Bformatted_address%5D=" + encodeURIComponent(q);
@@ -794,4 +806,4 @@ if("serviceWorker" in navigator && location.protocol.indexOf("http")===0){
 </script>
 </body>
 </html>
-<!-- build 3 · Now/Next ribbon, leave-by alerts, offline SW, phrases, photo spots, persistent checklists -->
+<!-- build 4 · Now/Next ribbon, leave-by alerts, offline SW, phrases, photo spots, persistent checklists -->
