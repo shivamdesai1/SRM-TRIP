@@ -160,6 +160,28 @@
   .mini .uber{background:#111;color:#fff}
 
   .foot{text-align:center;font-size:12px;color:var(--sub2);margin-top:26px;line-height:1.6}
+
+  /* ---------- Animated hero ---------- */
+  .hero{background-size:240% 240%;animation:heroShift 9s ease-in-out infinite alternate}
+  @keyframes heroShift{from{background-position:0% 0%}to{background-position:100% 100%}}
+  .hero .stamp{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;background:rgba(255,255,255,.2);border:0.5px solid rgba(255,255,255,.35);border-radius:99px;padding:4px 11px;margin-bottom:10px;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+
+  /* ---------- Now / Next ribbon ---------- */
+  .rib{max-width:560px;margin:12px auto -2px;padding:0 16px}
+  .ribcard{background:linear-gradient(150deg,#17171C,#232330 70%,#1C2438);color:#fff;border-radius:18px;padding:12px 14px;box-shadow:0 8px 24px rgba(10,15,40,.28)}
+  .ribtop{display:flex;align-items:center;gap:10px}
+  .ribnext{flex:1;min-width:0}
+  .ribk{font-size:10px;font-weight:800;letter-spacing:.09em;color:#9C9CA6;text-transform:uppercase}
+  .ribt{font-size:14.5px;font-weight:700;letter-spacing:-.01em;line-height:1.25;margin-top:2px}
+  .ribgo{display:flex;align-items:center;gap:6px;background:#fff;color:#111;font-size:12.5px;font-weight:700;padding:8px 12px;border-radius:12px;flex-shrink:0;transition:transform .12s}
+  .ribgo:active{transform:scale(.95)}
+  .ribgo svg{width:14px;height:14px}
+  .ribdiv{height:0.5px;background:rgba(255,255,255,.14);margin:10px 0}
+  .ribalert{display:flex;gap:8px;background:linear-gradient(135deg,#FF453A,#FF9F0A);border-radius:14px;padding:10px 12px;font-size:12.5px;font-weight:600;line-height:1.4;margin-top:10px}
+  .ribalert svg{width:16px;height:16px;flex-shrink:0;margin-top:1px}
+
+  .mini .fs{background:#FFF1D6;color:#B26A00}
+  .light{font-size:11.5px;font-weight:700;color:#fff;background:var(--sunset);padding:3px 8px;border-radius:99px;white-space:nowrap}
   @media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -169,6 +191,8 @@
   <h1 id="navTitle">Trip</h1>
   <div class="crumbrow" id="crumb"></div>
 </div>
+
+<div id="ribbon"></div>
 
 <div id="root"></div>
 
@@ -262,16 +286,19 @@ async function loadWx(){
       d.time.forEach((t,i)=>{ days[t] = {hi:Math.round(d.temperature_2m_max[i]), lo:Math.round(d.temperature_2m_min[i]), code:d.weather_code[i], rain:d.precipitation_probability_max[i] ?? 0}; });
       const his = Object.values(days);
       wxData[k] = {days, hi:Math.max(...his.map(x=>x.hi)), lo:Math.min(...his.map(x=>x.lo)), rain:Math.max(...his.map(x=>x.rain)), code:his.sort((a,b)=>b.rain-a.rain)[0].code};
-    }catch(e){ wxData[k] = null; }
+      try{ localStorage.setItem("wx_"+k, JSON.stringify(wxData[k])); }catch(e){}
+    }catch(e){
+      try{ wxData[k] = JSON.parse(localStorage.getItem("wx_"+k)) || null; }catch(_){ wxData[k] = null; }
+    }
   }));
   render();
 }
 
 const FLIGHTS = [
-  {route:"Newark → São Paulo", date:"Fri Jul 10 · 8:30 PM", detail:"UA149 · 9h 40m · EWR → GRU · land 7:10 AM", q:"Newark Liberty International Airport EWR", ql:"EWR"},
-  {route:"São Paulo → Rio", date:"Mon Jul 13 · 8:05 PM", detail:"Azul 4915 · 1h · CGH → SDU", q:"Aeroporto de Congonhas, São Paulo", ql:"CGH"},
-  {route:"Rio → Medellín", date:"Thu Jul 16 · 1:35 AM", detail:"via Bogotá (layover only) · land MDE 8:45 AM", q:"Aeroporto Internacional Tom Jobim GIG, Rio de Janeiro", ql:"GIG"},
-  {route:"Medellín → New York", date:"Sat Jul 18 · 10:40 PM", detail:"5h 40m · MDE → JFK · arrive 5:20 AM +1", q:"Aeropuerto José María Córdova, Rionegro", ql:"MDE"}
+  {route:"Newark → São Paulo", date:"Fri Jul 10 · 8:30 PM", detail:"UA149 · 9h 40m · EWR → GRU · land 7:10 AM", q:"Newark Liberty International Airport EWR", ql:"EWR", fs:"https://www.flightaware.com/live/flight/UAL149"},
+  {route:"São Paulo → Rio", date:"Mon Jul 13 · 8:05 PM", detail:"Azul 4915 · 1h · CGH → SDU", q:"Aeroporto de Congonhas, São Paulo", ql:"CGH", fs:"https://www.flightaware.com/live/flight/AZU4915"},
+  {route:"Rio → Medellín", date:"Thu Jul 16 · 1:35 AM", detail:"via Bogotá (layover only) · land MDE 8:45 AM", q:"Aeroporto Internacional Tom Jobim GIG, Rio de Janeiro", ql:"GIG", fs:"https://www.google.com/search?q=GIG+to+MDE+via+Bogota+flight+status+July+16"},
+  {route:"Medellín → New York", date:"Sat Jul 18 · 10:40 PM", detail:"5h 40m · MDE → JFK · arrive 5:20 AM +1", q:"Aeropuerto José María Córdova, Rionegro", ql:"MDE", fs:"https://www.google.com/search?q=MDE+to+JFK+flight+status+July+18"}
 ];
 
 const HOTELS = [
@@ -411,10 +438,109 @@ const CITIES = {
   mde: {name:"Medellín",  accent:"#0FAE5F", grad:"var(--gmde)", days:MDE_DAYS}
 };
 
+/* ============================== NOW / NEXT ENGINE ============================== */
+const TZOFF = {sp:"-03:00", rio:"-03:00", mde:"-05:00"}; // Brazil BRT · Colombia COT (no DST in July)
+function to24(t){
+  const m = String(t).match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+  if(!m) return null;
+  let h = (+m[1]) % 12; if(/pm/i.test(m[3])) h += 12;
+  return String(h).padStart(2,"0") + ":" + m[2];
+}
+const SCHED = [{at:new Date("2026-07-10T20:30:00-04:00"), t:"Fly EWR → GRU", day:"Fri Jul 10", label:"8:30 PM", q:"Newark Liberty International Airport EWR"}];
+Object.entries(CITIES).forEach(([k,c])=>{
+  c.days.forEach(d=>{
+    let last = null;
+    d.items.forEach(it=>{
+      const hm = to24(it.time); if(!hm) return;
+      let dt = new Date(d.iso + "T" + hm + ":00" + TZOFF[k]);
+      if(last && dt <= last) dt = new Date(dt.getTime() + 864e5); // past-midnight items (1:35 AM flight, 12 AM club)
+      last = dt;
+      SCHED.push({at:dt, t:it.t, day:d.label, label:it.time, q:it.q || ""});
+    });
+  });
+});
+SCHED.sort((a,b)=>a.at-b.at);
+
+const DEADLINES = [
+  {at:new Date("2026-07-10T17:45:00-04:00"), win:4, label:"5:45 PM", msg:"Head to Newark — UA149 to São Paulo boards ~7:45 PM."},
+  {at:new Date("2026-07-13T17:30:00-03:00"), win:3, label:"5:30 PM", msg:"Uber to Congonhas — Monday rush hour is real."},
+  {at:new Date("2026-07-14T06:45:00-03:00"), win:2, label:"6:45 AM", msg:"Uber to Paineiras for the first Corcovado vans."},
+  {at:new Date("2026-07-15T22:15:00-03:00"), win:4, label:"10:15 PM", msg:"Wheels to GIG for the 1:35 AM flight — hard deadline."},
+  {at:new Date("2026-07-18T19:30:00-05:00"), win:3, label:"7:30 PM", msg:"Leave Poblado for MDE — the airport is up the mountain."}
+];
+function fmtCount(ms){
+  const m = Math.max(0, Math.round(ms/6e4)), h = Math.floor(m/60);
+  return h ? h + "h " + (m%60) + "m" : m + "m";
+}
+function tickNow(){
+  const el = document.getElementById("ribbon"); if(!el) return;
+  const now = new Date();
+  if(now > new Date("2026-07-19T08:00:00-04:00")){
+    el.innerHTML = `<div class="rib"><div class="ribcard"><div class="ribk">Trip complete</div><div class="ribt">Welcome home. Until the next one. 🏁</div></div></div>`;
+    return;
+  }
+  let cur = null, next = null;
+  for(const s of SCHED){ if(s.at <= now) cur = s; else { next = s; break; } }
+  let alert = "";
+  for(const dl of DEADLINES){
+    const diff = dl.at - now;
+    if(diff > -18e5 && diff < dl.win*36e5){
+      alert = `<div class="ribalert">${ICO.alert}<span><b>${diff > 0 ? "Leave by " + dl.label + " · " + fmtCount(diff) + " out." : "GO NOW."}</b> ${dl.msg}</span></div>`;
+      break;
+    }
+  }
+  const nextHTML = next ? `<div class="ribtop">
+      <div class="ribnext"><div class="ribk">${cur ? "Next" : "Up first"} · ${next.day} ${next.label} · in ${fmtCount(next.at - now)}</div><div class="ribt">${esc(next.t)}</div></div>
+      ${next.q ? `<a class="ribgo" href="${ub(next.q)}" target="_blank" rel="noopener">${ICO.car} Uber</a>` : ""}
+    </div>` : "";
+  el.innerHTML = `<div class="rib"><div class="ribcard">
+    ${cur ? `<div class="ribtop"><div class="ribnext"><div class="ribk">Now · started ${cur.label}</div><div class="ribt">${esc(cur.t)}</div></div></div>` : ""}
+    ${cur && next ? `<div class="ribdiv"></div>` : ""}
+    ${nextHTML}
+    ${alert}
+  </div></div>`;
+}
+
+/* ============================== PHRASES + PHOTO SPOTS ============================== */
+const PHRASES_PT = [
+  ["Oi, tudo bem?", "oy, TOO-doo BAYNG — hi, how's it going?"],
+  ["A conta, por favor", "ah KON-tah poor fah-VOR — the bill, please"],
+  ["Quanto custa?", "KWAN-too KOOS-tah — how much is it?"],
+  ["Duas caipirinhas, por favor", "DOO-ahs ky-pee-REEN-yahs — two caipirinhas, please"],
+  ["Obrigado!", "oh-bree-GAH-doo — thank you (said by men)"],
+  ["Não falo português", "nowng FAH-loo por-too-GEHS — I don't speak Portuguese"],
+  ["Onde fica o banheiro?", "OHN-jee FEE-kah oo bahn-YAY-roo — where's the bathroom?"],
+  ["Pode me levar para…?", "POH-jee mee leh-VAR PAH-rah — can you take me to…?"],
+  ["Cartão, pode ser?", "kar-TOWNG, POH-jee sair — is card okay?"],
+  ["Mais uma!", "myz OO-mah — one more! (the important one)"]
+];
+const PHRASES_ES = [
+  ["¡Buenas! ¿Qué más?", "BWEH-nahs, keh MAHS — hey! what's up? (the paisa greeting)"],
+  ["La cuenta, por favor", "lah KWEN-tah por fah-VOR — the bill, please"],
+  ["¿Cuánto cuesta?", "KWAN-toh KWES-tah — how much is it?"],
+  ["Dos cervezas, por favor", "dohs sair-VEH-sahs — two beers, please"],
+  ["Muchas gracias, muy amable", "GRAH-syahs, mwee ah-MAH-bleh — thanks, very kind"],
+  ["No hablo español", "noh AH-bloh es-pah-NYOL — I don't speak Spanish"],
+  ["¿Dónde está el baño?", "DOHN-deh es-TAH el BAH-nyoh — where's the bathroom?"],
+  ["¿Me lleva a…?", "meh YEH-vah ah — can you take me to…?"],
+  ["¿Aceptan tarjeta?", "ah-SEP-tahn tar-HEH-tah — do you take card?"],
+  ["¡Qué chimba!", "keh CHEEM-bah — that's awesome! (Medellín slang, use freely)"]
+];
+const SPOTS = [
+  {t:"Christ the Redeemer", s:"Morning sun lights the statue's face — and you beat the crowds on the first vans", light:"7:30–8:30 AM", q:"Cristo Redentor, Rio de Janeiro"},
+  {t:"Dois Irmãos summit", s:"Best free panorama in Rio — Ipanema curve, the lagoon, the ridgeline", light:"8–10 AM", q:"Trilha Dois Irmãos, Vidigal, Rio de Janeiro"},
+  {t:"Pedra do Arpoador", s:"The rock between Ipanema and Copacabana — the whole beach applauds the sunset", light:"5:00–5:30 PM", q:"Pedra do Arpoador, Rio de Janeiro"},
+  {t:"Sugarloaf summit", s:"Golden hour over Guanabara Bay, city lights flickering on as you descend", light:"4:45–5:25 PM", q:"Pão de Açúcar, Rio de Janeiro"},
+  {t:"Beco do Batman", s:"SP's street-art alley — shoot midday when the walls are shadow-free", light:"11 AM–2 PM", q:"Beco do Batman, Vila Madalena, São Paulo"},
+  {t:"La Piedra — step 740", s:"Guatapé's lake maze from the top platform — summit before the afternoon clouds", light:"9–11 AM", q:"Piedra del Peñol, Guatapé"},
+  {t:"Comuna 13 escalators", s:"Top platform over the orange rooftops — warm side-light late afternoon", light:"3:30–5 PM", q:"Comuna 13 escalators, Medellín"}
+];
+
 /* ============================== STATE ============================== */
 let tab = "overview";
 const dayIdx = {sp:0, rio:0, mde:0};
-const checks = {book:new Set(), pack:new Set()};
+function loadChecks(g){ try{ return new Set(JSON.parse(localStorage.getItem("chk_"+g)) || []); }catch(e){ return new Set(); } }
+const checks = {book:loadChecks("book"), pack:loadChecks("pack")};
 
 /* ============================== RENDER ============================== */
 function rowHTML(it, id){
@@ -496,6 +622,7 @@ function checklistHTML(list, group){
 function toggleCheck(group,i,el){
   checks[group].has(i) ? checks[group].delete(i) : checks[group].add(i);
   el.classList.toggle("done");
+  try{ localStorage.setItem("chk_"+group, JSON.stringify([...checks[group]])); }catch(e){}
 }
 
 function overviewHTML(){
@@ -504,13 +631,14 @@ function overviewHTML(){
   const live = Object.values(wxData).some(Boolean);
   return `<div class="page">
     <div class="hero">
-      <div class="k">9 days · 3 cities · 3 travelers</div>
-      <h2>South America, done right.</h2>
-      <p>Sunrise landmarks, beach-club afternoons, and out most nights.</p>
+      <div class="stamp">✦ Boys trip · Jul 10–19</div>
+      <div class="k">9 days · 3 cities · 2 countries · 0 wasted hours</div>
+      <h2>Samba, summits<br>& city lights.</h2>
+      <p>Sunrise at Christ. Jet skis under Sugarloaf. Rooftops in Poblado till the sun threatens to come back up.</p>
       <div class="legs">
-        <div class="leg"><b>São Paulo</b><span>Jul 11–13</span></div>
-        <div class="leg"><b>Rio</b><span>Jul 13–16</span></div>
-        <div class="leg"><b>Medellín</b><span>Jul 16–18</span></div>
+        <div class="leg"><b>São Paulo</b><span>Jul 11–13 · the warm-up</span></div>
+        <div class="leg"><b>Rio</b><span>Jul 13–16 · the main event</span></div>
+        <div class="leg"><b>Medellín</b><span>Jul 16–18 · the encore</span></div>
       </div>
     </div>
 
@@ -546,6 +674,7 @@ function overviewHTML(){
         <div class="end">
           <span class="time">${esc(f.date)}</span>
           <div class="mini">
+            <a class="fs" href="${f.fs}" target="_blank" rel="noopener" aria-label="Flight status ${f.ql}">${ICO.flight}</a>
             <a class="maps" href="${gm(f.q)}" target="_blank" rel="noopener" aria-label="Open ${f.ql} in Maps">${ICO.pin}</a>
             <a class="uber" href="${ub(f.q)}" target="_blank" rel="noopener" aria-label="Uber to ${f.ql}">${ICO.car}</a>
           </div>
@@ -573,7 +702,32 @@ function overviewHTML(){
     <div class="eyebrow">Packing</div>
     ${checklistHTML(PACKING,"pack")}
 
-    <div class="foot">USD conversions are approximate: R$5.50 ≈ $1 · COP 4,100 ≈ $1.<br>Forecast: Open-Meteo, refreshes each open · Checklist ticks reset when the file is reopened.</div>
+    <div class="foot">USD conversions are approximate: R$5.50 ≈ $1 · COP 4,100 ≈ $1.<br>Forecast: Open-Meteo, refreshes each open (last one is saved for offline) · Checklists save on this device.</div>
+  </div>`;
+}
+
+function extrasHTML(){
+  const spotRows = SPOTS.map(sp=>`
+    <div class="row" style="cursor:default">
+      <div class="glyph" style="background:#FFDBE5;color:#E64980">${ICO.tour}</div>
+      <div class="mid"><div class="t">${esc(sp.t)}</div><div class="s">${esc(sp.s)}</div></div>
+      <div class="end">
+        <span class="light">☀ ${esc(sp.light)}</span>
+        <div class="mini"><a class="maps" href="${gm(sp.q)}" target="_blank" rel="noopener" aria-label="Open ${esc(sp.t)} in Maps">${ICO.pin}</a></div>
+      </div>
+    </div>`).join("");
+  const phraseRows = list => list.map(p=>`
+    <div class="row" style="cursor:default">
+      <div class="mid"><div class="t">${esc(p[0])}</div><div class="s">${esc(p[1])}</div></div>
+    </div>`).join("");
+  return `<div class="page">
+    <div class="eyebrow">Photo spots · timed for the light</div>
+    <div class="card">${spotRows}</div>
+    <div class="callout tip">${ICO.bulb}<span><b>Golden rule:</b> the chip on each spot is when the light is best — the itinerary already routes you there at those times. Phones away between shots in Lapa and Comuna 13.</span></div>
+    <div class="eyebrow">Português — Brazil</div>
+    <div class="card">${phraseRows(PHRASES_PT)}</div>
+    <div class="eyebrow">Español — Medellín</div>
+    <div class="card">${phraseRows(PHRASES_ES)}</div>
   </div>`;
 }
 
@@ -582,7 +736,8 @@ const TABS = [
   {key:"overview", label:"Overview", icon:ICO.calendar},
   {key:"sp",  label:"São Paulo", icon:ICO.building},
   {key:"rio", label:"Rio", icon:ICO.waves},
-  {key:"mde", label:"Medellín", icon:ICO.mountain}
+  {key:"mde", label:"Medellín", icon:ICO.mountain},
+  {key:"extras", label:"Extras", icon:ICO.tour}
 ];
 
 function crumbHTML(){
@@ -590,6 +745,9 @@ function crumbHTML(){
     <span class="chip">${ICO.calendar} Jul 10–19</span>
     <span class="chip"><i class="dot" style="background:var(--gsp)"></i>SP<span class="arr">›</span><i class="dot" style="background:var(--grio)"></i>Rio<span class="arr">›</span><i class="dot" style="background:var(--gmde)"></i>MDE</span>
     <span class="chip">3 travelers</span>`;
+  if(tab==="extras") return `
+    <span class="chip">${ICO.tour} 7 photo spots</span>
+    <span class="chip">PT + ES · 20 lines</span>`;
   const c = CITIES[tab];
   const dates = {sp:"Jul 11–13", rio:"Jul 13–16", mde:"Jul 16–18"}[tab];
   const hotel = {sp:"Meliá Paulista", rio:"Othon Palace", mde:"The York"}[tab];
@@ -601,11 +759,11 @@ function crumbHTML(){
 
 function render(){
   const title = document.getElementById("navTitle");
-  title.textContent = tab==="overview" ? "Trip" : CITIES[tab].name;
+  title.textContent = tab==="overview" ? "Trip" : tab==="extras" ? "Extras" : CITIES[tab].name;
   title.className = tab==="overview" ? "" : "city";
-  title.style.color = tab==="overview" ? "" : CITIES[tab].accent;
+  title.style.color = tab==="overview" ? "" : tab==="extras" ? "#5E5CE6" : CITIES[tab].accent;
   document.getElementById("crumb").innerHTML = crumbHTML();
-  document.getElementById("root").innerHTML = tab==="overview" ? overviewHTML() : cityHTML(tab);
+  document.getElementById("root").innerHTML = tab==="overview" ? overviewHTML() : tab==="extras" ? extrasHTML() : cityHTML(tab);
   document.getElementById("tabbar").innerHTML = TABS.map(t=>`
     <button class="${t.key===tab?'on':''}" onclick="setTab('${t.key}')" ${t.key===tab && CITIES[t.key]?`style="color:${CITIES[t.key].accent}"`:''}>
       ${t.icon}<span>${t.label}</span>
@@ -615,8 +773,13 @@ function render(){
 function setTab(k){ tab=k; render(); }
 function setDay(k,i){ dayIdx[k]=i; render(); }
 render();
+tickNow();
+setInterval(tickNow, 30000);
 loadWx();
+if("serviceWorker" in navigator && location.protocol.indexOf("http")===0){
+  navigator.serviceWorker.register("./sw.js").catch(()=>{});
+}
 </script>
 </body>
 </html>
-<!-- build 2 · pushed by Claude · pipeline test -->
+<!-- build 3 · Now/Next ribbon, leave-by alerts, offline SW, phrases, photo spots, persistent checklists -->
