@@ -18,11 +18,18 @@
     --r:20px; --shadow:0 1px 2px rgba(0,0,0,.04),0 4px 16px rgba(0,0,0,.06);
   }
   *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-  html{scroll-behavior:smooth}
+  html,body{height:100%;overflow:hidden;position:fixed;inset:0;width:100%}
   body{
     font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display",system-ui,sans-serif;
     background:var(--bg); color:var(--ink);
     -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+  }
+  #scroll{
+    height:100%;
+    overflow-y:auto;
+    -webkit-overflow-scrolling:touch;
+    overscroll-behavior-y:contain;
+    scroll-behavior:smooth;
     padding-bottom:calc(84px + env(safe-area-inset-bottom));
   }
   button{font:inherit;border:0;background:none;cursor:pointer;color:inherit}
@@ -188,6 +195,7 @@
 </head>
 <body>
 
+<div id="scroll">
 <div class="nav">
   <h1 id="navTitle">Trip</h1>
   <div class="crumbrow" id="crumb"></div>
@@ -196,6 +204,7 @@
 <div id="ribbon"></div>
 
 <div id="root"></div>
+</div>
 
 <div class="tabbar" id="tabbar"></div>
 
@@ -769,7 +778,7 @@ function render(){
     <button class="${t.key===tab?'on':''}" onclick="setTab('${t.key}')" ${t.key===tab && CITIES[t.key]?`style="color:${CITIES[t.key].accent}"`:''}>
       ${t.icon}<span>${t.label}</span>
     </button>`).join("");
-  window.scrollTo({top:0});
+  document.getElementById("scroll").scrollTo({top:0});
 }
 function setTab(k){ tab=k; render(); }
 function setDay(k,i){ dayIdx[k]=i; render(); }
